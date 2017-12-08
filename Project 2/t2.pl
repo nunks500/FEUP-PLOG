@@ -3,7 +3,7 @@
 
 atividade(1,'refeicao',2).
 atividade(2,'jogo de futebol',2).
-atividade(3,'brainstorm',2).
+%atividade(3,'brainstorm',2).
 
 %atividade('workshop de madeira').
 %atividade('sudoku challenge').
@@ -15,7 +15,7 @@ participante(3,'Filipe','M',1.60,31,'bricolage').
 participante(4,'Henrique','M',1.62,28,'inteligente').
 participante(5,'Bond','M',1.50,31,'forte').
 participante(6,'Gordon Ramsey','M',1.90,50,'cozinha').
-%participante(7,'Joel','M',1.90,50,'cozinha').
+participante(7,'Joel','M',1.90,50,'cozinha').
 
 participant(L):- findall(Id,participante(Id,_,_,_,_,_),L).
 ativities(L):- findall(Id,atividade(Id,_,_),L).
@@ -62,7 +62,9 @@ iterador(L,S,Iterador,Event,N):- length(S,P),atividade(Event,_,Largura),sublist(
 
 sortbyrepetition(L,Index,N,Event,CurrentEvent,Index2):- ativities(A),length(A,Num),Num = 1.
 
-sortbyrepetition(L,Index,N,Event,CurrentEvent,Index2):- Index2 \= 0,mod(Index2,N) =:= 0,ativities(A),length(A,Num),Temp is Num*N , Temp - Index2 =:= N.
+sortbyrepetition(L,Index,N,Event,CurrentEvent,Index2):- Index2 \= 0,ativities(A),length(A,Num),Temp is Num*N ,Ajust is mod(N,Index2),N \= Ajust, Temp - Index2 =:= N + Ajust.
+sortbyrepetition(L,Index,N,Event,CurrentEvent,Index2):- Index2 \= 0,ativities(A),length(A,Num),Temp is Num*N , Temp - Index2 =:= N.
+
 sortbyrepetition(L,Index,N,Event,CurrentEvent,Index2):- ativities(A),length(A,Num),Num = Event,atividade(CurrentEvent,_,Largura),Index3 is Index2 + Largura ,sortbyrepetition(L,0,N,CurrentEvent,CurrentEvent,Index3).
 sortbyrepetition(L,Index,N,Event,CurrentEvent,Index2):- Index2 \= 0,mod(Index2,N) =:= 0,CurrentEvent2 is CurrentEvent + 1,atividade(CurrentEvent2,_,Largura),sublist(L,S,Index2,Largura),Event1 is CurrentEvent2 + 1,Iterador is Index + N*CurrentEvent2 ,iterador(L,S,Iterador,Event1,N),sortbyrepetition(L,Iterador,N,Event1,CurrentEvent2,Index2).
 
