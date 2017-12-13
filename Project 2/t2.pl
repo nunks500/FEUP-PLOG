@@ -1,8 +1,8 @@
 :-use_module(library(clpfd)).
 :-use_module(library(lists)).
 
-atividade(1,'refeicao',2).
-atividade(2,'jogo de futebol',2).
+atividade(1,'refeicao',4).
+atividade(2,'jogo de futebol',3).
 atividade(3,'brainstorm',2).
 
 %atividade('workshop de madeira').
@@ -16,6 +16,7 @@ participante(4,'Henrique','M',1.62,28,'inteligente').
 participante(5,'Bond','M',1.50,31,'forte').
 participante(6,'Gordon Ramsey','M',1.90,50,'cozinha').
 participante(7,'Joel','M',1.90,50,'cozinha').
+%participante(8,'Pilinha','M',1.90,50,'cozinha').
 
 participant(L):- findall(Id,participante(Id,_,_,_,_,_),L).
 ativities(L):- findall(Id,atividade(Id,_,_),L).
@@ -56,21 +57,40 @@ ndifferent(L,N,Count,N3):-sublist(L,S,Count,N),all_different(S),Count1 is Count 
 %sortbyrepetition(L,Index,N,Event):- atividade(Event,_,Largura),sublist(L,S,Index,Largura),Event1 is Event + 1,Iterador is Event1 + N,iterador(L,S,Iterador,Event1,N).%,sortbyrepetition(L,Index,N,Event1).
 
 iterador(L,S,Iterador,Event,N):- Iterador #>= Event * N.
-iterador(L,S,Iterador,Event,N):- length(S,P),atividade(Event,_,Largura), sublist(L,S2,Iterador,Largura),NovoIterador is Iterador + Largura,length(S2,P2),append(S,S2,ListaFinal),Size #= P + P2 - 1 #\/ Size #= P + P2 ,nvalue(Size, ListaFinal),iterador(L,S,NovoIterador,Event,N).
-iterador(L,S,Iterador,Event,N):- length(S,P),atividade(Event,_,Largura),Checker is Iterador + Largura ,Checker > Event*N,NewLargura is Checker - (Event*N).%,write(NewLargura),  sublist(L,S2,Iterador,NewLargura),NovoIterador is Iterador + NewLargura,length(S2,P2),append(S,S2,ListaFinal),Size #= P + P2 - 1 #\/ Size #= P + P2 ,nvalue(Size, ListaFinal).
+iterador(L,S,Iterador,Event,N):- write(Iterador),nl,length(S,P),atividade(Event,_,Largura),Checker is Iterador + Largura ,Checker > Event*N,NewLargura is Checker - (Event*N).%,write(NewLargura),  sublist(L,S2,Iterador,NewLargura),NovoIterador is Iterador + NewLargura,length(S2,P2),append(S,S2,ListaFinal),Size #= P + P2 - 1 #\/ Size #= P + P2 ,nvalue(Size, ListaFinal).
+iterador(L,S,Iterador,Event,N):- write(Iterador),nl,length(S,P),atividade(Event,_,Largura), sublist(L,S2,Iterador,Largura),NovoIterador is Iterador + Largura,length(S2,P2),append(S,S2,ListaFinal),Size #= P + P2 - 1 #\/ Size #= P + P2 ,nvalue(Size, ListaFinal),iterador(L,S,NovoIterador,Event,N).
 
 
-%sortbyrepetition(L,Index,N,Event):- ativities(A),length(A,Num),Num = Event.
+
+%sortbyrepetition(L,N,N,Event,CurrentEvent,Index2):- ativities(A),length(A,Num),CurrentEvent2 is CurrentEvent + 1,Num = CurrentEvent2.
+
+sortbyrepetition(L,Index,N,Event,CurrentEvent,Index2):- ativities(A),length(A,Num),CurrentEvent = Num,Temp is CurrentEvent - 1,atividade(Temp,_,Largura),Event1 is Event - 1,sublist(L,S,Index2,Largura),Iterador is Temp * N,iterador(L,S,Iterador,Event1,N).
+%sortbyrepetition(L,18,6,4,3,10):-sublist(L,S,10,2),iterador(L,S,12,3,6).
+
 
 sortbyrepetition(L,Index,N,Event,CurrentEvent,Index2):- ativities(A),length(A,Num),Num = 1.
 
 sortbyrepetition(L,Index,N,Event,CurrentEvent,Index2):- atividade(Event,_,Largura),mod(N,Largura) =:= 0,Index2 \= 0,ativities(A),length(A,Num),Temp is Num*N , Temp - Index2 =:= N.
 
+%sortbyrepetition(L,Index,N,Event,CurrentEvent,Index2):- ativities(A),length(A,Num),Num = Event,atividade(CurrentEvent,_,Largura), mod(N,Largura) \= 0, CurrentEvent2 is CurrentEvent + 1,atividade(CurrentEvent2,_,Largura),sublist(L,S,Index2,Largura),Event1 is CurrentEvent2 + 1,Iterador is Index + N*CurrentEvent2 ,iterador(L,S,Iterador,Event1,N),write(Iterador),sortbyrepetition(L,Iterador,N,Event1,CurrentEvent2,Index2).
 
-sortbyrepetition(L,Index,N,Event,CurrentEvent,Index2):- ativities(A),length(A,Num),Num = Event,atividade(CurrentEvent,_,Largura),Index3 is Index2 + Largura ,sortbyrepetition(L,0,N,CurrentEvent,CurrentEvent,Index3).
-sortbyrepetition(L,Index,N,Event,CurrentEvent,Index2):- Index2 \= 0,mod(Index2,N) =:= 0,CurrentEvent2 is CurrentEvent + 1,atividade(CurrentEvent2,_,Largura),sublist(L,S,Index2,Largura),Event1 is CurrentEvent2 + 1,Iterador is Index + N*CurrentEvent2 ,iterador(L,S,Iterador,Event1,N),sortbyrepetition(L,Iterador,N,Event1,CurrentEvent2,Index2).
+sortbyrepetition(L,Index,N,Event,CurrentEvent,Index2):- ativities(A),length(A,Num),Num = Event,write('hhhhhh'),atividade(CurrentEvent,_,Largura),mod(N,Largura) =:= 0,Index3 is Index2 + Largura ,sortbyrepetition(L,0,N,CurrentEvent,CurrentEvent,Index3).
+%sortbyrepetition(L,Index,N,Event,CurrentEvent,Index2):- ativities(A),length(A,Num),Num = Event,write('hhhhhh'),atividade(CurrentEvent,_,Largura),mod(N,Largura) \= 0,Index3 is Index2 + Largura,sortbyrepetition(L,0,N,CurrentEvent,CurrentEvent,Index3).
+%sortbyrepetition(L,Index,N,Event,CurrentEvent,Index2):- ativities(A),length(A,Num),Num = Event,write('hhhhhh'),atividade(CurrentEvent,_,Largura),mod(N,Largura) \= 0,mod(N,Index2) \= 0,Index3 is Index2 + Largura, (( Index3 > N*CurrentEvent -> Index4 is N*CurrentEvent);(Index4 is Index2 + Largura)) ,sortbyrepetition(L,0,N,CurrentEvent,CurrentEvent,Index4).
+sortbyrepetition(L,Index,N,Event,CurrentEvent,Index2):- ativities(A),length(A,Num),Num = Event,write('hhhhhh'),atividade(CurrentEvent,_,Largura),mod(N,Largura) \= 0,mod(N,Index2) \= 0,Index3 is Index2 + Largura, (( Index2 < N*(CurrentEvent-1) -> Index4 is N*(CurrentEvent-1));(Index4 is Index2 + Largura)) ,sortbyrepetition(L,0,N,CurrentEvent,CurrentEvent,Index4).
 
-sortbyrepetition(L,Index,N,Event,CurrentEvent,Index2):- atividade(CurrentEvent,_,Largura),sublist(L,S,Index2,Largura),Event1 is Event + 1,Iterador is Index + N*CurrentEvent ,iterador(L,S,Iterador,Event1,N),sortbyrepetition(L,Iterador,N,Event1,CurrentEvent,Index2).
+
+%sortbyrepetition(L,Index,N,Event,CurrentEvent,Index2):- Index2 \= 0,mod(Index2,N) =:= 0,CurrentEvent2 is CurrentEvent + 1,atividade(CurrentEvent2,_,Largura),sublist(L,S,Index2,Largura),Event1 is CurrentEvent2 + 1,Iterador is  N*CurrentEvent2 ,iterador(L,S,Iterador,Event1,N),write(Iterador),sortbyrepetition(L,Iterador,N,Event1,CurrentEvent2,Index2).
+
+sortbyrepetition(L,Index,N,Event,CurrentEvent,Index2):-  write(CurrentEvent),write(':'),write(Index2),write(':'),write(Index),write(':'),write(Event),nl,Index2 \= 0, Index2 < CurrentEvent*N,atividade(CurrentEvent,_,Largura),Index2 + Largura >= N * CurrentEvent,CurrentEvent2 is CurrentEvent + 1,Event1 is CurrentEvent2 + 1,Iterador is Index + N*CurrentEvent2 ,sortbyrepetition(L,Iterador,N,Event1,CurrentEvent2,Index2).
+
+sortbyrepetition(L,Index,N,Event,CurrentEvent,Index2):- ativities(A),length(A,Num),CurrentEvent2 is CurrentEvent + 1,Num = CurrentEvent2,atividade(CurrentEvent,_,Largura), \+ sublist(L,S,Index2,Largura).
+
+sortbyrepetition(L,Index,N,Event,CurrentEvent,Index2):- write(CurrentEvent),write(':'),write(Index2),write(':'),write(Index),write(':'),write(Event),nl,atividade(CurrentEvent,_,Largura),Index2 + Largura =< N * CurrentEvent,sublist(L,S,Index2,Largura),Event1 is Event + 1,Iterador is Index + N*CurrentEvent ,iterador(L,S,Iterador,Event1,N),sortbyrepetition(L,Iterador,N,Event1,CurrentEvent,Index2).
+sortbyrepetition(L,Index,N,Event,CurrentEvent,Index2):- write(CurrentEvent),write(':'),write(Index2),write(':'),write(Index),write(':'),write(Event),nl,atividade(CurrentEvent,_,Largura),Index2 + Largura > N * CurrentEvent,Iterador is Index + N*CurrentEvent,Event1 is Event + 1,sortbyrepetition(L,Iterador,N,Event1,CurrentEvent,Index2).
+
+sortbyrepetition(L,Index,N,Event,CurrentEvent,Index2):- Index2 \= 0,CurrentEvent2 is CurrentEvent + 1,atividade(CurrentEvent2,_,Largura),sublist(L,S,Index2,Largura),Event1 is CurrentEvent2 + 1,Iterador is Index + N*CurrentEvent2 ,iterador(L,S,Iterador,Event1,N),write(Iterador),nl,sortbyrepetition(L,Iterador,N,Event1,CurrentEvent2,Index2).
+
 %,Temp is Iterador + N ,Event2 is Event + 2,iterador(L,S,Temp,Event2,N).%
 
 sortbyrepetition(L,Index,N,Event,CurrentEvent,Index2):- Index2 \= 0,ativities(A),length(A,Num),Temp is Num*N ,Ajust is mod(N,Index2),N \= Ajust, Temp - Index2 =:= N + Ajust.
